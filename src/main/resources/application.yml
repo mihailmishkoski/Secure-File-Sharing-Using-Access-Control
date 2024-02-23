@@ -1,0 +1,20 @@
+cloud:
+  aws:
+    credentials:
+      access-key: AKIA2UC3FB57H4QRAGRB
+      secret-key: 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
+    region:
+      static: eu-east-1
+    stack:
+      auto: false
+
+
+
+application:
+  bucket:
+    name: bucketibfinki
+
+
+
+server:
+  port: 9090
