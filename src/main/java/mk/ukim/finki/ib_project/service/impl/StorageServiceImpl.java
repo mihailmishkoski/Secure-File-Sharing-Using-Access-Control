@@ -4,13 +4,22 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import lombok.extern.slf4j.Slf4j;
+import mk.ukim.finki.ib_project.security.AESUtil;
 import mk.ukim.finki.ib_project.service.StorageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,12 +56,34 @@ public class StorageServiceImpl implements StorageService {
     }
     @Override
     public String uploadFile(MultipartFile file){
-        File fileObject = convertMultiPartFileToFile(file);
-        String fileName = System.currentTimeMillis()+"_"+file.getOriginalFilename();
-        amazonS3.putObject(new PutObjectRequest(bucketName,fileName,fileObject));
-        fileObject.delete();
-        return "File uploaded" + fileName;
+        try {
+
+            byte[] fileContent = file.getBytes();
+
+
+            SecretKey aesKey = AESUtil.generateAESKey();
+
+
+            byte[] encryptedContent = AESUtil.encrypt(fileContent, aesKey);
+
+
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+
+
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(encryptedContent);
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(encryptedContent.length);
+            amazonS3.putObject(bucketName, fileName, inputStream, metadata);
+
+            // Return the filename or any other information you need
+            return "File uploaded: " + fileName;
+        } catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException |
+                 InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+            log.error("Error uploading file", e);
+            return "Error uploading file";
+        }
     }
+
 
     @Override
     public File convertMultiPartFileToFile(MultipartFile file) {
