@@ -20,7 +20,9 @@ public class User {
     private String password;
     private int twoFactorCode;
     @OneToMany(cascade = CascadeType.REMOVE)
-    private List<Document> documentList;
+    private List<Permission> documentList;
+
+
     public User(String name, String surname, String email, String password) {
         this.name = name;
         this.surname = surname;

@@ -8,6 +8,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -95,5 +96,16 @@ public class UserServiceImpl implements UserService {
     public User findUser(String email)
     {
         return userRepository.findUserByEmail(email);
+    }
+
+    @Override
+    public List<User> listAll()
+    {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public List<User> findUsersById(List<Long> userIds) {
+        return userRepository.findByIdIn(userIds);
     }
 }

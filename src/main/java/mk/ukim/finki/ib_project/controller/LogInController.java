@@ -26,7 +26,6 @@ public class LogInController {
                             Model model)
     {
         if (email != null && password != null) {
-
             if (userService.authenticate(email, password)) {
                 User user = userService.findUser(email);
                 userService.generateOtp(user);
@@ -108,7 +107,7 @@ public class LogInController {
                                           Model model) {
         User user = userService.findUser(email);
         if (code == user.getTwoFactorCode()) {
-            session.setAttribute("account", user);
+            session.setAttribute("account", user.getId());
             return "redirect:/home";
         }
         model.addAttribute("errorMessage", "No user found with those credentials");

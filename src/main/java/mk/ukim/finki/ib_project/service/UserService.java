@@ -2,6 +2,8 @@ package mk.ukim.finki.ib_project.service;
 
 import mk.ukim.finki.ib_project.model.User;
 
+import java.util.List;
+
 public interface UserService {
     User create (String name, String surname, String email, String password);
     boolean authenticate(String email, String password);
@@ -18,4 +20,8 @@ public interface UserService {
     void generateOtp(User account);
 
     User findUser(String email);
+
+    List<User> listAll();
+
+    List<User> findUsersById(List<Long> userIds);
 }
