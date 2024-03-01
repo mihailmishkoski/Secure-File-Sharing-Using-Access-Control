@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import java.util.List;
 
 @Controller
-@SessionAttributes("account")
+@SessionAttributes({"account","currentUserId"})
 public class MainPageController {
 
     private final UserRepository userRepository;

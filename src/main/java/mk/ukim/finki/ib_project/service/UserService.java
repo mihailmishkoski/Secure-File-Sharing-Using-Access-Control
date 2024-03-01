@@ -24,4 +24,6 @@ public interface UserService {
     List<User> listAll();
 
     List<User> findUsersById(List<Long> userIds);
+
+    User findUserById(Long userId);
 }

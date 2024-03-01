@@ -7,4 +7,6 @@ import java.util.List;
 public interface PermissionService {
 
     void addPermission(List<User> userList, String fileName);
+
+    boolean checkPermission(User user, String fileName);
 }

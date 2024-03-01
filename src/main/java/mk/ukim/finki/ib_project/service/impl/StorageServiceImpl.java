@@ -67,16 +67,15 @@ public class StorageServiceImpl implements StorageService {
             byte[] encryptedContent = AESUtil.encrypt(fileContent, aesKey);
 
 
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
 
             ByteArrayInputStream inputStream = new ByteArrayInputStream(encryptedContent);
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(encryptedContent.length);
-            amazonS3.putObject(bucketName, fileName, inputStream, metadata);
+            amazonS3.putObject(bucketName, file.getOriginalFilename(), inputStream, metadata);
 
             // Return the filename or any other information you need
-            return "File uploaded: " + fileName;
+            return "File uploaded: " + file.getOriginalFilename();
         } catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException |
                  InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             log.error("Error uploading file", e);

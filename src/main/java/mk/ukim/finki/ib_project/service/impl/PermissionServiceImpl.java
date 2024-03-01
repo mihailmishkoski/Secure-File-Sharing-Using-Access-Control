@@ -20,4 +20,16 @@ public class PermissionServiceImpl implements PermissionService {
     public void addPermission(List<User> userList, String fileName) {
         permissionRepository.save(new Permission(userList,fileName));
     }
+
+    @Override
+    public boolean checkPermission(User user, String fileName) {
+        List<Permission> permissions = permissionRepository.findByFileNameAndUsers(fileName, user);
+
+        for (Permission permission : permissions) {
+            if (permission.getFileName().equals(fileName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

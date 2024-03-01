@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
-@SessionAttributes("account")
+@SessionAttributes({"account","currentUserId"})
+
 public class LogInController {
 
     private final UserService userService;
@@ -107,7 +108,8 @@ public class LogInController {
                                           Model model) {
         User user = userService.findUser(email);
         if (code == user.getTwoFactorCode()) {
-            session.setAttribute("account", user.getId());
+            session.setAttribute("account", user);
+            session.setAttribute("currentUserId", user.getId());
             return "redirect:/home";
         }
         model.addAttribute("errorMessage", "No user found with those credentials");

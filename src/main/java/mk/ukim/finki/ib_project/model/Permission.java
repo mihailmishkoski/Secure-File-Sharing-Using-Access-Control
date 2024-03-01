@@ -1,22 +1,26 @@
 package mk.ukim.finki.ib_project.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.List;
 
 @Entity
-@Table(name = "document")
+@Data
 public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToMany
-    List<User> userIds;
+    List<User> users;
+
     private String fileName;
 
-    public Permission(List<User> userIds, String fileName) {
-        this.userIds = userIds;
+
+
+    public Permission(List<User> users, String fileName) {
+        this.users = users;
         this.fileName = fileName;
     }
 
