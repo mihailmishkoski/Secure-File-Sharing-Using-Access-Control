@@ -45,7 +45,7 @@ public class StorageController {
     @GetMapping("/download/{fileName}")
     public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileName, Model model) {
         Long currentUserId = (Long) model.getAttribute("currentUserId");
-        User currentUser = (User) userService.findUserById(currentUserId);
+        User currentUser = userService.findUserById(currentUserId);
         if(permissionService.checkPermission(currentUser, fileName))
         {
             byte[] data = storageService.downloadFile(fileName);

@@ -4,6 +4,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import lombok.extern.slf4j.Slf4j;
+import mk.ukim.finki.ib_project.model.Permission;
+import mk.ukim.finki.ib_project.repository.PermissionRepository;
 import mk.ukim.finki.ib_project.security.AESUtil;
 import mk.ukim.finki.ib_project.service.StorageService;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,12 +30,14 @@ import java.util.List;
 public class StorageServiceImpl implements StorageService {
 
     private final AmazonS3 amazonS3;
+    private final PermissionRepository permissionRepository;
 
     @Value("${application.bucket.name}")
     private String bucketName;
 
-    public StorageServiceImpl(AmazonS3 amazonS3) {
+    public StorageServiceImpl(AmazonS3 amazonS3, PermissionRepository permissionRepository) {
         this.amazonS3 = amazonS3;
+        this.permissionRepository = permissionRepository;
     }
 
 
@@ -57,23 +61,16 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public String uploadFile(MultipartFile file){
         try {
-
             byte[] fileContent = file.getBytes();
-
-
             SecretKey aesKey = AESUtil.generateAESKey();
-
-
             byte[] encryptedContent = AESUtil.encrypt(fileContent, aesKey);
-
-
-
-
             ByteArrayInputStream inputStream = new ByteArrayInputStream(encryptedContent);
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(encryptedContent.length);
             amazonS3.putObject(bucketName, file.getOriginalFilename(), inputStream, metadata);
-
+            Permission permission = permissionRepository.findByFileName(file.getOriginalFilename());
+            permission.setDecryptionKey(aesKey);
+            permissionRepository.save(permission);
             // Return the filename or any other information you need
             return "File uploaded: " + file.getOriginalFilename();
         } catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException |
@@ -107,8 +104,12 @@ public class StorageServiceImpl implements StorageService {
         S3ObjectInputStream inputStream = s3Object.getObjectContent();
         try {
             byte[] content = IOUtils.toByteArray(inputStream);
-            return content;
-        } catch (IOException e) {
+            SecretKey decryptionKey = permissionRepository.findByFileName(fileName).getDecryptionKey();
+            System.out.println(decryptionKey);
+            byte[] decryptedContent = AESUtil.decrypt(content, decryptionKey);
+            return decryptedContent;
+        } catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
+                 IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
         }
         return null;
