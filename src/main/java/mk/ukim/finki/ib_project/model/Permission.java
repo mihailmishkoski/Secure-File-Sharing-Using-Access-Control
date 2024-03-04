@@ -3,6 +3,7 @@ package mk.ukim.finki.ib_project.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import javax.crypto.SecretKey;
 import java.util.List;
 
 @Entity
@@ -17,7 +18,7 @@ public class Permission {
 
     private String fileName;
 
-
+    private SecretKey decryptionKey;
 
     public Permission(List<User> users, String fileName) {
         this.users = users;
