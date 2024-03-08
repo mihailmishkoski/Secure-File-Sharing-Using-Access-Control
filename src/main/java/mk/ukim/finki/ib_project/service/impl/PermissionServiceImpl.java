@@ -32,4 +32,15 @@ public class PermissionServiceImpl implements PermissionService {
         }
         return false;
     }
+
+    @Override
+    public void deleteFileName(String fileName) {
+        Permission permission = permissionRepository.findByFileName(fileName);
+        permissionRepository.delete(permission);
+    }
+
+    @Override
+    public List<Permission> findAllDocumentsWithPermission(User user) {
+        return permissionRepository.findPermissionsByUsersContaining(user);
+    }
 }

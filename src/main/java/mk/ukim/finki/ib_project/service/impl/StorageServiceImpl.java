@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import lombok.extern.slf4j.Slf4j;
 import mk.ukim.finki.ib_project.model.Permission;
+import mk.ukim.finki.ib_project.model.User;
 import mk.ukim.finki.ib_project.repository.PermissionRepository;
 import mk.ukim.finki.ib_project.security.AESUtil;
 import mk.ukim.finki.ib_project.service.StorageService;
@@ -32,6 +33,8 @@ public class StorageServiceImpl implements StorageService {
     private final AmazonS3 amazonS3;
     private final PermissionRepository permissionRepository;
 
+
+
     @Value("${application.bucket.name}")
     private String bucketName;
 
@@ -58,6 +61,9 @@ public class StorageServiceImpl implements StorageService {
         } while (result.isTruncated());
         return fileList;
     }
+
+
+
     @Override
     public String uploadFile(MultipartFile file){
         try {
@@ -95,8 +101,8 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public String deleteFile(String fileName) {
         amazonS3.deleteObject(bucketName, fileName);
-//        Permission p = permissionRepository.findByFileName(fileName);
-//        permissionRepository.delete(p);
+        Permission p = permissionRepository.findByFileName(fileName);
+        permissionRepository.delete(p);
         return fileName + " removed ...";
     }
 

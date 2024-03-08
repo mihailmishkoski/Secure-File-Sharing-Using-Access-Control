@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.naming.NoPermissionException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,11 +34,18 @@ public class StorageController {
     }
 
     @PostMapping("/upload")
-    public String uploadFile(@RequestParam(value = "file") MultipartFile file, @RequestParam List<Long> userIds, Model model) {
-        List<User> userList = userService.findUsersById(userIds);
-        permissionService.addPermission(userList,file.getOriginalFilename());
-        storageService.uploadFile(file);
+    public String uploadFile(@RequestParam(value = "file") MultipartFile file, @RequestParam(required = false) List<Long> userIds, Model model) {
 
+        List<User> userList = new ArrayList<>();
+        if(userIds!=null)
+        {
+            userList = userService.findUsersById(userIds);
+        }
+        userList.add(userService.findUserById((Long)model.getAttribute("currentUserId")));
+
+
+        permissionService.addPermission(userList, file.getOriginalFilename());
+        storageService.uploadFile(file);
 
         return "redirect:/home";
     }
@@ -61,8 +69,13 @@ public class StorageController {
     }
 
     @PostMapping("/delete/{fileName}")
-    public String deleteFile(@PathVariable String fileName) {
-        storageService.deleteFile(fileName);
+    public String deleteFile(@PathVariable String fileName, Model model) {
+        User currentUser = userService.findUserById((Long)model.getAttribute("currentUserId"));
+        if(permissionService.checkPermission(currentUser,fileName))
+        {
+            storageService.deleteFile(fileName);
+        }
+
         return "redirect:/home";
     }
 }

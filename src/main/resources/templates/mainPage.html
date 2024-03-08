@@ -105,9 +105,11 @@
         </div>
         <div class="form-group">
             <label>Select Users:</label><br>
-            <th:block th:name="userIds" th:each="user : ${users}">
-                <input type="checkbox" name="userIds" th:value="${user.id}">
-                <label th:text="${user.name}"></label><br>
+            <th:block th:each="user : ${users}">
+                <th:block th:unless="${user.id == currentUserId}">
+                    <input type="checkbox" name="userIds" th:value="${user.id}">
+                    <label th:text="${user.name}"></label><br>
+                </th:block>
             </th:block>
         </div>
         <button type="submit">Upload</button>

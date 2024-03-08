@@ -14,4 +14,6 @@ public interface PermissionRepository extends JpaRepository<Permission,Long> {
     List<Permission> findByFileNameAndUsers(String fileName, User user);
     Permission findByFileName(String fileName);
 
+    List<Permission> findPermissionsByUsersContaining(User user);
+
 }
