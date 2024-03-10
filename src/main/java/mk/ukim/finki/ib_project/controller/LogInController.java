@@ -73,7 +73,7 @@ public class LogInController {
         model.addAttribute("surname", surname);
         model.addAttribute("email", email);
         model.addAttribute("password", password);
-        model.addAttribute("repeatPassword", repeatedPassword);
+        model.addAttribute("repeatedPassword", repeatedPassword);
         if (allGood) {
             int code = userService.mailVerification(email);
             session.setAttribute("userDetails", new User(name,surname,email,password));
