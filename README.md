@@ -1,3 +1,10 @@
+# Short description 
+This web application offers a secure sharing files with precise user access control. Users can effortlessly upload files and designate specific users within the system who are authorized to access them.
+Upon successful login and authentication, users can manage their uploaded files, The interface is straightforward, enabling users to upload files and select recipients with ease.
+The application ensures security through encryption, utilizing AES encryption for uploaded files. Only authorized users with proper access permissions can download and view files in their original, decrypted form. Unauthorized attempts to download files result in encrypted downloads, maintaining data security. Furthermore, this application will keep growing as I learn. I might add more features and even upgrade the interface using React.js. It's an ongoing process to make it better and more user-friendly.
+
+
+
 # Technologies Used
 This web application is built using Java Spring, PostgreSQL, Thymeleaf, and Amazon S3.
 
